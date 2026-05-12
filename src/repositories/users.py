@@ -24,3 +24,10 @@ class UsersRepository(BaseRepository):
 
     async def change_password_hash(self, data: PasswordHashUpdate, user_id: int) -> None:
         await self.edit(data, is_patch=True, id=user_id)
+
+    async def delete_by_id(self, user_id: int) -> None:
+        user = await self.get_by_id(user_id)
+        if user is not None:
+            await self.session.delete(user)
+        # не через обычный delete
+        # тк await self.session.delete(user) работает с ORM и cascade работает надежнее
