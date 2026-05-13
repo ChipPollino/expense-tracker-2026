@@ -17,7 +17,7 @@ class CategoriesRepository(BaseRepository):
         return await self.get_one_or_none(name=category_name,
                                           user_id=user_id)
 
-    async def change_name(self, data: CategoryUpdate, category_id: int, user_id: int) -> None:
+    async def update_name(self, data: CategoryUpdate, category_id: int, user_id: int) -> None:
         await self.edit(data=data,
                         is_patch=True,
                         id=category_id,

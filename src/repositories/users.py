@@ -22,7 +22,7 @@ class UsersRepository(BaseRepository):
         result = await self.session.execute(stmt)
         return result.scalars().one_or_none()
 
-    async def change_password_hash(self, data: PasswordHashUpdate, user_id: int) -> None:
+    async def update_password_hash(self, data: PasswordHashUpdate, user_id: int) -> None:
         await self.edit(data, is_patch=True, id=user_id)
 
     async def delete_by_id(self, user_id: int) -> None:
