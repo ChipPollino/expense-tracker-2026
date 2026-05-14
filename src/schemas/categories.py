@@ -10,7 +10,7 @@ class CategoryCreate(CategoryBase):
 
 
 class CategoryUpdate(BaseModel):
-    name: str | None = Field(default=None, min_length=1, max_length=100)
+    name: str = Field(min_length=1, max_length=100) #None не имеет смысла
 
 
 class CategoryRead(CategoryBase):
