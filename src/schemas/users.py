@@ -11,7 +11,7 @@ class UserCreate(UserBase):
 
 
 class UserCreateDB(UserBase):
-    hashed_password: str
+    password_hash: str
 
 
 class UserUpdate(BaseModel):
@@ -34,7 +34,6 @@ class UserRead(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-# class UserLogin(BaseModel):
-#     name: str
-#     email: EmailStr
-#     password: str
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8)

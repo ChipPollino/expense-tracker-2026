@@ -1,19 +1,20 @@
 from datetime import datetime, timezone
 from decimal import Decimal
 import enum
+from email.policy import default
 
 from pydantic import BaseModel, Field, ConfigDict, model_validator
 
 
 class ExpenseCreate(BaseModel):
-    category_id: int
+    category_id: int = Field(gt=0)
     amount: Decimal = Field(gt=0)
     expense_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     description: str | None = Field(default=None, max_length=255)
 
 
 class ExpenseUpdate(BaseModel):
-    category_id: int | None = None
+    category_id: int | None = Field(default=None, gt=0)
     amount: Decimal | None = Field(default=None, gt=0)
     expense_date: datetime | None = None
     description: str | None = Field(default=None, max_length=255)
