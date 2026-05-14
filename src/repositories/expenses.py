@@ -1,12 +1,11 @@
+from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-
-from src.models import CategoriesOrm
-from src.models.expenses import ExpensesOrm
-from src.schemas.expenses import ExpenseFilter, ExpenseOrderBy
 
 from src.repositories.base import BaseRepository
 
-from sqlalchemy import select
+from src.models.categories import CategoriesOrm
+from src.models.expenses import ExpensesOrm
+from src.schemas.expenses import ExpenseFilter, ExpenseOrderBy, ExpenseUpdate
 
 
 class ExpensesRepository(BaseRepository):
@@ -66,6 +65,16 @@ class ExpensesRepository(BaseRepository):
                 .filter_by(id=expense_id, user_id=user_id))
         result = await self.session.execute(stmt)
         return result.scalars().one_or_none()
+
+    async def get_expenses_in_category(self, category_id: int, user_id: int):
+        stmt = (select(ExpensesOrm.id).
+                filter_by(category_id=category_id, user_id=user_id)
+                .limit(1))
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none() is not None
+
+    async def update_by_id_for_user(self, data: ExpenseUpdate, expense_id: int, user_id: int) -> None:
+        await self.edit(data=data, is_patch=True, id=expense_id, user_id=user_id)
 
     async def delete_by_id_for_user(self, expense_id: int, user_id: int) -> None:
         await self.delete(id=expense_id, user_id=user_id)
