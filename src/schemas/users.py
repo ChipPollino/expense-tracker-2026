@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr, ConfigDict
+from pydantic import BaseModel, Field, EmailStr, ConfigDict, model_validator
 
 
 class UserBase(BaseModel):
@@ -15,8 +15,21 @@ class UserCreateDB(UserBase):
 
 
 class UserUpdate(BaseModel):
-    name: str | None = Field(default=None, max_length=100)
+    name: str | None = Field(default=None, min_length=1, max_length=100)
     email: EmailStr | None = None
+
+    @model_validator(mode="after")
+    def validate_nullable_fields(self):
+        not_nullable_fields = {
+            "name": self.name,
+            "email": self.email,
+        }
+
+        for field_name, value in not_nullable_fields.items():
+            if field_name in self.model_fields_set and value is None:
+                raise ValueError(f"{field_name} cannot be null")
+
+        return self
 
 
 class PasswordChange(BaseModel):

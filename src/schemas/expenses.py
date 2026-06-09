@@ -1,7 +1,6 @@
 from datetime import datetime, timezone
 from decimal import Decimal
 import enum
-from email.policy import default
 
 from pydantic import BaseModel, Field, ConfigDict, model_validator
 
