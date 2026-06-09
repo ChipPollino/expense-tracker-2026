@@ -14,25 +14,15 @@ from src.schemas.users import (
     UserLogin,
 )
 
+from src.services.exceptions import (
+    EmailAlreadyRegisteredError,
+    InvalidCredentialsError,
+    UserNotFoundError,
+    InvalidOldPasswordError
+)
+
 
 password_hasher = PasswordHash.recommended()
-
-
-class EmailAlreadyRegisteredError(Exception):
-    pass
-
-
-class InvalidCredentialsError(Exception):
-    pass
-
-
-class InvalidOldPasswordError(Exception):
-    pass
-
-
-class UserNotFoundError(Exception):
-    pass
-
 
 class AuthService:
     def __init__(self, session: AsyncSession):
