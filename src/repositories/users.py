@@ -3,7 +3,7 @@ from sqlalchemy.orm import selectinload
 
 from src.models import UsersOrm
 from src.repositories.base import BaseRepository
-from src.schemas.users import PasswordHashUpdate
+from src.schemas.users import PasswordHashUpdate, UserUpdate
 
 
 class UsersRepository(BaseRepository):
@@ -24,6 +24,9 @@ class UsersRepository(BaseRepository):
 
     async def update_password_hash(self, data: PasswordHashUpdate, user_id: int) -> None:
         await self.edit(data, is_patch=True, id=user_id)
+
+    async def update_by_id(self, data: UserUpdate, user_id: int) -> None:
+        await self.edit(data=data, is_patch=True, id=user_id)
 
     async def delete_by_id(self, user_id: int) -> None:
         user = await self.get_by_id(user_id)

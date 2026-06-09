@@ -66,7 +66,7 @@ class ExpensesRepository(BaseRepository):
         result = await self.session.execute(stmt)
         return result.scalars().one_or_none()
 
-    async def get_expenses_in_category(self, category_id: int, user_id: int):
+    async def has_expenses_in_category(self, category_id: int, user_id: int):
         stmt = (select(ExpensesOrm.id).
                 filter_by(category_id=category_id, user_id=user_id)
                 .limit(1))
