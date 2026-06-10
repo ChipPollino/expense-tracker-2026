@@ -79,16 +79,6 @@ async def logout(request: Request):
     }
 
 
-@router.get(
-    "/me",
-    response_model=UserRead,
-)
-async def get_me(
-    current_user: UsersOrm = Depends(get_current_user),
-):
-    return current_user
-
-
 @router.patch("/change-password")
 async def change_password(
     data: PasswordChange,
