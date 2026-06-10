@@ -17,8 +17,10 @@ class UserNotFoundError(Exception):
 class EmptyUpdateError(Exception):
     pass
 
+
 class SettingsNotFoundError(Exception):
     pass
+
 
 class CategoryNotFoundError(Exception):
     pass
@@ -29,4 +31,8 @@ class CategoryAlreadyExistsError(Exception):
 
 
 class CategoryHasExpensesError(Exception):
+    pass
+
+
+class ExpenseNotFoundError(Exception):
     pass
