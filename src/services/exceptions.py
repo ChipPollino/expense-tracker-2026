@@ -19,3 +19,14 @@ class EmptyUpdateError(Exception):
 
 class SettingsNotFoundError(Exception):
     pass
+
+class CategoryNotFoundError(Exception):
+    pass
+
+
+class CategoryAlreadyExistsError(Exception):
+    pass
+
+
+class CategoryHasExpensesError(Exception):
+    pass
