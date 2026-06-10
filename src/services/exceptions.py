@@ -16,3 +16,6 @@ class UserNotFoundError(Exception):
 
 class EmptyUpdateError(Exception):
     pass
+
+class SettingsNotFoundError(Exception):
+    pass
