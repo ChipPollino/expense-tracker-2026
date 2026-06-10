@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block body %}
+<main class="auth-layout">
+    <section class="auth-showcase">
+        <a class="brand brand--light" href="/">
+            <span class="brand__mark">₽</span>
+            <span>Expense Tracker</span>
+        </a>
+        <div class="auth-showcase__content">
+            <p class="eyebrow eyebrow--light">Личные финансы без хаоса</p>
+            <h1>Контролируй расходы.<br>Понимай свои привычки.</h1>
+            <p>Категории, фильтры, лимиты и наглядная аналитика в одном аккуратном пространстве.</p>
+            <div class="auth-showcase__stats">
+                <div><strong>24/7</strong><span>доступ к истории</span></div>
+                <div><strong>3</strong><span>вида аналитики</span></div>
+                <div><strong>100%</strong><span>личные данные</span></div>
+            </div>
+        </div>
+        <p class="auth-showcase__footnote">Учебный проект на FastAPI, PostgreSQL и Jinja2</p>
+    </section>
+
+    <section class="auth-panel">
+        <div class="auth-card">
+            <a class="brand" href="/">
+                <span class="brand__mark">₽</span>
+                <span>Expense Tracker</span>
+            </a>
+            <div class="auth-card__header">
+                <p class="eyebrow">С возвращением</p>
+                <h2>Войти в аккаунт</h2>
+                <p>Продолжи вести учет расходов и следить за бюджетом.</p>
+            </div>
+
+            <form class="form-stack" id="login-form">
+                <label class="form-field">
+                    <span>Email</span>
+                    <input type="email" name="email" autocomplete="email" placeholder="name@example.com" required>
+                </label>
+                <label class="form-field">
+                    <span>Пароль</span>
+                    <input type="password" name="password" autocomplete="current-password" placeholder="Не менее 8 символов" minlength="8" required>
+                </label>
+                <button class="button button--primary button--wide" type="submit">
+                    <span>Войти</span>
+                    <span aria-hidden="true">→</span>
+                </button>
+            </form>
+
+            <p class="auth-card__switch">Еще нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', path='/js/auth.js') }}"></script>
+{% endblock %}

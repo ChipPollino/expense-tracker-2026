@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block body %}
+<main class="auth-layout">
+    <section class="auth-showcase auth-showcase--register">
+        <a class="brand brand--light" href="/">
+            <span class="brand__mark">₽</span>
+            <span>Expense Tracker</span>
+        </a>
+        <div class="auth-showcase__content">
+            <p class="eyebrow eyebrow--light">Начни с малого</p>
+            <h1>Собери ясную картину своих финансов.</h1>
+            <p>Создай аккаунт, добавь категории и начни фиксировать траты. Остальное посчитает приложение.</p>
+            <ul class="feature-list">
+                <li><span>✓</span> Собственные категории расходов</li>
+                <li><span>✓</span> Месячный лимит и светлая/темная тема</li>
+                <li><span>✓</span> Аналитика по месяцам и категориям</li>
+            </ul>
+        </div>
+        <p class="auth-showcase__footnote">Прозрачная layered architecture: API → Service → Repository → DB</p>
+    </section>
+
+    <section class="auth-panel">
+        <div class="auth-card">
+            <a class="brand" href="/">
+                <span class="brand__mark">₽</span>
+                <span>Expense Tracker</span>
+            </a>
+            <div class="auth-card__header">
+                <p class="eyebrow">Новый аккаунт</p>
+                <h2>Регистрация</h2>
+                <p>Три поля — и можно начинать вести бюджет.</p>
+            </div>
+
+            <form class="form-stack" id="register-form">
+                <label class="form-field">
+                    <span>Имя</span>
+                    <input type="text" name="name" autocomplete="name" placeholder="Анна" minlength="1" maxlength="100" required>
+                </label>
+                <label class="form-field">
+                    <span>Email</span>
+                    <input type="email" name="email" autocomplete="email" placeholder="name@example.com" required>
+                </label>
+                <label class="form-field">
+                    <span>Пароль</span>
+                    <input type="password" name="password" autocomplete="new-password" placeholder="Не менее 8 символов" minlength="8" required>
+                </label>
+                <button class="button button--primary button--wide" type="submit">
+                    <span>Создать аккаунт</span>
+                    <span aria-hidden="true">→</span>
+                </button>
+            </form>
+
+            <p class="auth-card__switch">Уже есть аккаунт? <a href="/login">Войти</a></p>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', path='/js/auth.js') }}"></script>
+{% endblock %}

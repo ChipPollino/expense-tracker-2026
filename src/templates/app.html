@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block body %}
+<div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+        <a class="brand sidebar__brand" href="/app">
+            <span class="brand__mark">₽</span>
+            <span>Expense Tracker</span>
+        </a>
+
+        <nav class="sidebar__nav" aria-label="Главная навигация">
+            <button class="nav-item is-active" type="button" data-section="dashboard">
+                <span class="nav-item__icon">⌂</span><span>Обзор</span>
+            </button>
+            <button class="nav-item" type="button" data-section="expenses">
+                <span class="nav-item__icon">↗</span><span>Расходы</span>
+            </button>
+            <button class="nav-item" type="button" data-section="categories">
+                <span class="nav-item__icon">◌</span><span>Категории</span>
+            </button>
+            <button class="nav-item" type="button" data-section="settings">
+                <span class="nav-item__icon">⚙</span><span>Настройки</span>
+            </button>
+            <button class="nav-item" type="button" data-section="profile">
+                <span class="nav-item__icon">◎</span><span>Профиль</span>
+            </button>
+        </nav>
+
+        <div class="sidebar__footer">
+            <button class="theme-switch" id="sidebar-theme-toggle" type="button" aria-label="Переключить тему">
+                <span>☼</span><span>Тема интерфейса</span><span>☾</span>
+            </button>
+            <button class="nav-item nav-item--logout" id="logout-button" type="button">
+                <span class="nav-item__icon">↪</span><span>Выйти</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="workspace">
+        <header class="topbar">
+            <div>
+                <button class="mobile-menu" id="mobile-menu" type="button" aria-label="Открыть меню">☰</button>
+                <p class="eyebrow" id="section-eyebrow">Финансовый обзор</p>
+                <h1 id="section-title">Добрый день</h1>
+            </div>
+            <div class="topbar__actions">
+                <button class="button button--soft" type="button" data-open-expense-modal>
+                    <span>＋</span><span>Добавить расход</span>
+                </button>
+                <div class="user-chip">
+                    <span class="user-chip__avatar" id="user-avatar">?</span>
+                    <span>
+                        <strong id="user-name">Загрузка...</strong>
+                        <small id="user-email"></small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <section class="page-section is-active" data-page="dashboard">
+            <div class="metric-grid">
+                <article class="metric-card metric-card--accent">
+                    <span class="metric-card__label">Потрачено всего</span>
+                    <strong id="summary-total">—</strong>
+                    <small id="summary-count">Загрузка...</small>
+                </article>
+                <article class="metric-card">
+                    <span class="metric-card__label">Месячный лимит</span>
+                    <strong id="budget-limit">Не задан</strong>
+                    <div class="progress"><span id="budget-progress"></span></div>
+                    <small id="budget-caption">Можно установить в настройках</small>
+                </article>
+                <article class="metric-card">
+                    <span class="metric-card__label">Категории</span>
+                    <strong id="categories-count">—</strong>
+                    <small>Собственные группы расходов</small>
+                </article>
+                <article class="metric-card">
+                    <span class="metric-card__label">Последняя трата</span>
+                    <strong id="latest-expense">—</strong>
+                    <small id="latest-expense-caption">Пока данных нет</small>
+                </article>
+            </div>
+
+            <div class="dashboard-grid">
+                <article class="panel panel--chart">
+                    <div class="panel__header">
+                        <div><p class="eyebrow">Структура расходов</p><h2>По категориям</h2></div>
+                    </div>
+                    <div class="chart-wrap chart-wrap--doughnut"><canvas id="category-chart"></canvas></div>
+                    <div class="empty-state is-hidden" id="category-chart-empty">Добавь расходы, чтобы увидеть распределение.</div>
+                </article>
+                <article class="panel panel--chart">
+                    <div class="panel__header">
+                        <div><p class="eyebrow">Динамика</p><h2>По месяцам</h2></div>
+                    </div>
+                    <div class="chart-wrap"><canvas id="monthly-chart"></canvas></div>
+                    <div class="empty-state is-hidden" id="monthly-chart-empty">Помесячная статистика появится после первой траты.</div>
+                </article>
+            </div>
+
+            <article class="panel">
+                <div class="panel__header">
+                    <div><p class="eyebrow">Свежие операции</p><h2>Последние расходы</h2></div>
+                    <button class="text-button" type="button" data-section-jump="expenses">Смотреть все →</button>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead><tr><th>Категория</th><th>Описание</th><th>Дата</th><th class="table-number">Сумма</th></tr></thead>
+                        <tbody id="recent-expenses-body"></tbody>
+                    </table>
+                </div>
+                <div class="empty-state is-hidden" id="recent-expenses-empty">Пока нет расходов. Добавь первую операцию.</div>
+            </article>
+        </section>
+
+        <section class="page-section" data-page="expenses">
+            <article class="panel">
+                <div class="panel__header panel__header--wrap">
+                    <div><p class="eyebrow">История операций</p><h2>Расходы</h2></div>
+                    <button class="button button--primary" type="button" data-open-expense-modal>＋ Новая трата</button>
+                </div>
+                <form class="filter-grid" id="expense-filter-form">
+                    <label class="form-field"><span>Категория</span><select name="category_id" id="filter-category"><option value="">Все категории</option></select></label>
+                    <label class="form-field"><span>От даты</span><input type="datetime-local" name="date_from"></label>
+                    <label class="form-field"><span>До даты</span><input type="datetime-local" name="date_to"></label>
+                    <label class="form-field"><span>Сумма от</span><input type="number" name="amount_from" min="0" step="0.01" placeholder="0"></label>
+                    <label class="form-field"><span>Сумма до</span><input type="number" name="amount_to" min="0" step="0.01" placeholder="∞"></label>
+                    <label class="form-field"><span>Сортировка</span><select name="order_by"><option value="newest">Сначала новые</option><option value="oldest">Сначала старые</option><option value="amount_desc">Сначала дорогие</option><option value="amount_asc">Сначала недорогие</option><option value="category_asc">Категория А–Я</option><option value="category_desc">Категория Я–А</option></select></label>
+                    <div class="filter-grid__actions"><button class="button button--primary" type="submit">Применить</button><button class="button button--ghost" type="reset" id="reset-filters">Сбросить</button></div>
+                </form>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead><tr><th>Категория</th><th>Описание</th><th>Дата</th><th class="table-number">Сумма</th><th class="table-actions">Действия</th></tr></thead>
+                        <tbody id="expenses-body"></tbody>
+                    </table>
+                </div>
+                <div class="empty-state is-hidden" id="expenses-empty">По выбранным условиям расходов нет.</div>
+            </article>
+        </section>
+
+        <section class="page-section" data-page="categories">
+            <div class="two-column-grid">
+                <article class="panel">
+                    <div class="panel__header"><div><p class="eyebrow">Группировка</p><h2>Категории</h2></div></div>
+                    <div class="category-list" id="category-list"></div>
+                    <div class="empty-state is-hidden" id="categories-empty">Создай первую категорию для расходов.</div>
+                </article>
+                <article class="panel panel--sticky">
+                    <div class="panel__header"><div><p class="eyebrow">Новая группа</p><h2>Добавить категорию</h2></div></div>
+                    <form class="form-stack" id="category-form">
+                        <label class="form-field"><span>Название</span><input type="text" name="name" maxlength="100" placeholder="Например, Еда" required></label>
+                        <button class="button button--primary" type="submit">Создать категорию</button>
+                    </form>
+                </article>
+            </div>
+        </section>
+
+        <section class="page-section" data-page="settings">
+            <div class="two-column-grid">
+                <article class="panel">
+                    <div class="panel__header"><div><p class="eyebrow">Персонализация</p><h2>Настройки интерфейса</h2></div></div>
+                    <form class="form-stack" id="settings-form">
+                        <label class="form-field"><span>Тема</span><select name="theme" id="theme-select"><option value="light">Светлая</option><option value="dark">Темная</option></select></label>
+                        <label class="form-field"><span>Месячный лимит</span><input type="number" name="monthly_limit" id="monthly-limit" min="0" step="0.01" placeholder="Например, 50000"></label>
+                        <div class="inline-actions"><button class="button button--primary" type="submit">Сохранить</button><button class="button button--ghost" id="reset-limit" type="button">Сбросить лимит</button></div>
+                    </form>
+                </article>
+                <article class="panel info-panel">
+                    <p class="eyebrow">Подсказка</p>
+                    <h2>Как работает лимит?</h2>
+                    <p>Лимит хранится в настройках аккаунта. На главной странице отображается прогресс: сколько уже потрачено относительно установленной суммы.</p>
+                    <div class="info-note">Для полного сброса приложение отправляет <code>monthly_limit: null</code>.</div>
+                </article>
+            </div>
+        </section>
+
+        <section class="page-section" data-page="profile">
+            <div class="two-column-grid">
+                <article class="panel">
+                    <div class="panel__header"><div><p class="eyebrow">Аккаунт</p><h2>Профиль</h2></div></div>
+                    <form class="form-stack" id="profile-form">
+                        <label class="form-field"><span>Имя</span><input type="text" name="name" id="profile-name" minlength="1" maxlength="100" required></label>
+                        <label class="form-field"><span>Email</span><input type="email" name="email" id="profile-email" required></label>
+                        <button class="button button--primary" type="submit">Обновить профиль</button>
+                    </form>
+                </article>
+                <article class="panel">
+                    <div class="panel__header"><div><p class="eyebrow">Безопасность</p><h2>Сменить пароль</h2></div></div>
+                    <form class="form-stack" id="password-form">
+                        <label class="form-field"><span>Текущий пароль</span><input type="password" name="old_password" minlength="8" autocomplete="current-password" required></label>
+                        <label class="form-field"><span>Новый пароль</span><input type="password" name="new_password" minlength="8" autocomplete="new-password" required></label>
+                        <button class="button button--primary" type="submit">Сменить пароль</button>
+                    </form>
+                </article>
+            </div>
+            <article class="panel danger-zone">
+                <div><p class="eyebrow">Необратимое действие</p><h2>Удалить аккаунт</h2><p>Будут удалены профиль, настройки, категории и вся история расходов.</p></div>
+                <button class="button button--danger" id="delete-account" type="button">Удалить навсегда</button>
+            </article>
+        </section>
+    </main>
+</div>
+
+<dialog class="modal" id="expense-modal">
+    <form class="modal__card form-stack" id="expense-form" method="dialog">
+        <div class="modal__header"><div><p class="eyebrow">Операция</p><h2 id="expense-modal-title">Новая трата</h2></div><button class="icon-button" type="button" data-close-modal aria-label="Закрыть">×</button></div>
+        <input type="hidden" id="expense-id">
+        <label class="form-field"><span>Категория</span><select name="category_id" id="expense-category" required></select></label>
+        <label class="form-field"><span>Сумма</span><input type="number" name="amount" id="expense-amount" min="0.01" step="0.01" placeholder="0.00" required></label>
+        <label class="form-field"><span>Дата и время</span><input type="datetime-local" name="expense_date" id="expense-date"></label>
+        <label class="form-field"><span>Описание</span><textarea name="description" id="expense-description" maxlength="255" rows="3" placeholder="Необязательный комментарий"></textarea></label>
+        <div class="inline-actions"><button class="button button--primary" type="submit">Сохранить</button><button class="button button--ghost" type="button" data-close-modal>Отмена</button></div>
+    </form>
+</dialog>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', path='/js/app.js') }}"></script>
+{% endblock %}
