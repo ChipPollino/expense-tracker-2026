@@ -4,6 +4,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from src.api.routers.auth import router as auth_router
 from src.api.routers.categories import router as categories_router
+from src.api.routers.expenses import router as expenses_router
 from src.core.config import settings
 
 
@@ -18,6 +19,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(categories_router)
+app.include_router(expenses_router)
 
 
 if __name__ == "__main__":
