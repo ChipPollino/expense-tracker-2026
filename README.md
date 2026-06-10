@@ -29,7 +29,7 @@
 Используемый стек:
 
 * Язык: Python 3
-* База данных: SQLite
+* База данных: PostgreSQL
 * Backend: FastAPI
 * Шаблоны (frontend): Jinja2
 * HTTP-тестирование: Swagger/Postman
